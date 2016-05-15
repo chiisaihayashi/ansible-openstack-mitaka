@@ -1,0 +1,47 @@
+---
+- name: update packages once
+  apt: update_cache=yes
+
+- name: install ubuntu-cloud-keyring(ubuntu)
+  apt: name={{ item }} state=latest
+  with_items:
+    - ubuntu-cloud-keyring
+
+- name: add mitaka cloudarchive
+  apt_repository: repo='deb http://ubuntu-cloud.archive.canonical.com/ubuntu trusty-updates/mitaka main' state=present
+
+- name: update packages once
+  apt: update_cache=yes
+
+- name: dist-upgrade
+  apt: upgrade=dist
+
+- name: update hosts files to all hosts
+  template: src=hosts
+            dest=/etc/hosts
+            backup=yes
+- name: install common packages
+  apt: name={{ item }} state=latest
+  with_items:
+    - python-pip
+    - python-dev
+    - python-mysqldb
+    - ntp
+    - memcached
+    - python-memcache
+
+- name: update ntp conf
+  template: src=ntp.conf dest=/etc/ntp.conf backup=yes
+  notify:
+    - restart ntp
+
+- name: update memcached conf
+  template: src=memcached.conf dest=/etc/memcached.conf backup=yes
+
+- name: update pip
+  pip: name={{ item }} state=latest
+  with_items:
+    - pip
+
+- name: restart memcached
+  service: name=memcached state=restarted

@@ -1,0 +1,14 @@
+---
+- name: install rabbitmq-server
+  apt: name=rabbitmq-server state=present
+
+- name: start and enable rabbitmq-server
+  service: name=rabbitmq-server
+           state=restarted
+           enabled=yes
+
+- name: add the cloud user
+  command: rabbitmqctl add_user {{ RABBIT_USER }} {{ RABBIT_PASS }}
+
+- name: permit configuration of write, and read access for the cloud user
+  command: rabbitmqctl set_permissions {{ RABBIT_USER }} ".*" ".*" ".*"

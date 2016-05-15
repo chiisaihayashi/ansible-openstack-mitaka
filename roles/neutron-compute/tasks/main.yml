@@ -1,0 +1,61 @@
+---
+- name: load the br_netfilter kernel module
+  modprobe: name=br_netfilter state=present
+
+- shell: cat /etc/modules
+  register: v_modules
+
+- name: auto load the br_netfilter
+  lineinfile: >
+    dest=/etc/modules
+    line='br_netfilter'
+  when: v_modules.stdout.find('br_netfilter') == -1
+
+- name: activate ipv4 forwarding
+  sysctl: name=net.ipv4.ip_forward value=1 state=present reload=yes
+
+- name: deactivate ipv4 rp filter
+  sysctl: name=net.ipv4.conf.all.rp_filter value=0 state=present reload=yes
+
+- name: deactivate ipv4 default rp filter
+  sysctl: name=net.ipv4.conf.default.rp_filter value=0 state=present reload=yes
+
+- name: activate nf call iptables
+  sysctl: name=net.bridge.bridge-nf-call-iptables value=1 state=present reload=yes
+
+- name: install neutron network related packages
+  apt: name={{ item }} state=present force=yes
+  with_items:
+    - neutron-plugin-ml2
+
+- name: install neutron openvswitch agent
+  apt: name=neutron-plugin-openvswitch-agent state=present force=yes
+  when: "'openvswitch' in {{ NEUTRON_MECHANISM_DRIVERS }}"
+
+- name: config neutron
+  template: src=neutron.conf dest=/etc/neutron/neutron.conf backup=yes
+
+- name: config ml2 plugin
+  template: src=plugins/ml2/ml2_conf.ini dest=/etc/neutron/plugins/ml2/ml2_conf.ini backup=yes
+
+- name: config ml2 plugin with openvswitch
+  template: src=plugins/ml2/openvswitch_agent.ini dest=/etc/neutron/plugins/ml2/openvswitch_agent.ini backup=yes
+  when: "'openvswitch' in {{ NEUTRON_MECHANISM_DRIVERS }}"
+
+- name: add br-int
+  openvswitch_bridge: bridge=br-int state=present
+  when: "'openvswitch' in {{ NEUTRON_MECHANISM_DRIVERS }}"
+
+- name: restart ovs service
+  service: name=openvswitch-switch state=restarted
+  when: "'openvswitch' in {{ NEUTRON_MECHANISM_DRIVERS }}"
+
+- name: restart neutron-openvswitch-agent service
+  service: name={{ item }} state=restarted
+  with_items:
+   - neutron-openvswitch-agent
+   - nova-compute
+  when: "'openvswitch' in {{ NEUTRON_MECHANISM_DRIVERS }}"
+
+- meta: flush_handlers
+

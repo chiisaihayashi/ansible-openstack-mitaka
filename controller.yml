@@ -1,0 +1,12 @@
+---
+- hosts: controller
+  sudo: yes 
+  roles:
+    - { role: common }
+    - { role: database }
+    - { role: mq }
+    - { role: keystone }
+    - { role: glance }
+    - { role: nova }
+    - { role: neutron }
+    - { role: dashboard }

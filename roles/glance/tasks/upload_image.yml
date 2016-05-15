@@ -1,0 +1,7 @@
+- name: Adding OS images into Glance
+  environment: admin_openrc_env
+  command: "{{item}}"
+  with_items:
+  - wget http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img
+  - glance image-create --file cirros-0.3.4-x86_64-disk.img --name "CirrOS 0.3.4 - Cirros - 64-bit - Cloud Based Image" --protected False --container-format bare --disk-format qcow2
+  register: glance_images_created

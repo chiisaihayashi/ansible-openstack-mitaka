@@ -1,0 +1,7 @@
+---
+- hosts: compute
+  sudo: yes 
+  roles:
+    - { role: common }
+    - { role: nova-compute }
+    - { role: neutron-compute }

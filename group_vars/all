@@ -1,0 +1,74 @@
+CONTROLLER_IP: 10.1.253.57
+PUBLIC_IP: 192.168.253.57
+
+DEBUG: False
+VERBOSE: False
+MQ_BROKER: rabbitmq
+
+OPENSTACK_REPO: cloudarchive-mitaka.list
+
+ADMIN_TOKEN: vu5shee6Loh0
+CEILOMETER_TOKEN:
+RABBIT_USER: openstack 
+RABBIT_PASS: Ea3ubee1
+
+KEYSTONE_DBPASS: daoVah2n
+
+DEMO_PASS: demo
+ADMIN_PASS: admin
+
+GLANCE_PASS: Ees3eeJe
+GLANCE_DBPASS: daoVah2n
+
+NOVA_PASS: Ees3eeJe
+NOVA_DBPASS: daoVah2n
+NOVA_VIRT_TYPE: kvm
+
+NEUTRON_PASS: Ees3eeJe
+NEUTRON_DBPASS: daoVah2n
+NEUTRON_TYPE_DRIVERS: ['local', 'flat', 'gre']
+NEUTRON_TENANT_NETWORK_TYPES: ['gre']
+NEUTRON_MECHANISM_DRIVERS: ['openvswitch']
+NEUTRON_TUNNEL_TYPES: ['gre']
+METADATA_SECRET: NaOgViAu3een
+INSTANCE_TUNNELS_INTERFACE_IP_ADDRESS:
+
+CINDER_PASS: Ees3eeJe
+SWIFT_PASS: Ees3eeJe
+HEAT_PASS: Ees3eeJe
+
+TOKEN_ENV:
+  OS_TOKEN: "{{ ADMIN_TOKEN }}"
+  OS_URL: "http://controller:35357/v2.0"
+
+admin_openrc_env:
+  OS_PROJECT_DOMAIN_ID: "default"
+  OS_USER_DOMAIN_ID: "default"
+  OS_PROJECT_NAME: "admin"
+  OS_TENANT_NAME: "admin"
+  OS_USERNAME: "admin"
+  OS_PASSWORD: "admin"
+  OS_AUTH_URL: "http://controller:35357/v3"
+EXTERNAL_NETWORK_CIDR:
+EXTERNAL_NETWORK_GATEWAY:
+FLOATING_IP_START:
+FLOATING_IP_END:
+
+build_in_image: http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img
+build_in_image_name: cirros-0.3.4-x86_64-disk.img
+
+
+physical_device:
+
+management_nic: em1
+management_interface: "ansible_{{ management_nic }}"
+management_ip: "{{ hostvars[inventory_hostname][management_interface]['ipv4']['address'] }}"
+
+external_nic: p257p1
+external_interface:  "ansible_{{ external_nic }}"
+external_ip:  "{{ hostvars[inventory_hostname][external_interface]['ipv4']['address'] }}"
+
+internal_nic: em1
+internal_interface: "ansible_{{ internal_nic }}"
+internal_ip: "{{ hostvars[inventory_hostname][internal_interface]['ipv4']['address'] }}"
+

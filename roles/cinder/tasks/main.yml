@@ -1,0 +1,17 @@
+---
+- name: install cinder related packages
+  apt: name={{ item }} state=present force=yes
+  with_items:
+    - cinder-api
+    - cinder-shceduler
+
+- name: update cinder conf
+  template: src=cinder.conf dest=/etc/cinder/cinder.conf backup=yes
+  notify:
+    - restart cinder-api
+    - restart cinder-scheduler
+
+- name: cinder db sync
+  command: su -s /bin/sh -c "cinder-manage db sync" cinder
+
+- meta: flush_handlers

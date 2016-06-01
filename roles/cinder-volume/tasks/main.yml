@@ -1,0 +1,19 @@
+---
+- name: install cinder-volume related packages
+  apt: name={{ item }} state=present force=yes
+  with_items:
+    - lvm2
+    - cinder-volume
+
+- name: create LVM physical volume
+  command: "pvcreate /dev/{{ pv }}"
+
+- name: create LVM volume group cinder-volumes
+  command: "vgcreate cinder-volumes /dev/{{ pv }}"
+
+- name: update cinder conf
+  template: src=cinder.conf dest=/etc/cinder/cinder.conf backup=yes
+  notify:
+    - restart tgt
+    - restart cinder-volume
+

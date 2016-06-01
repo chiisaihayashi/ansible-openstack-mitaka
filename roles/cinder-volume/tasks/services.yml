@@ -1,0 +1,7 @@
+- name: Creating Services
+  environment: admin_openrc_env
+  command: "{{item}}"
+  with_items:
+  - openstack service create --name cinder --description "OpenStack Block Storage" volume
+  - openstack service create --name cinderv2 --description "OpenStack Block Storage" volumev2
+  register: cinder_service_ready

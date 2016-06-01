@@ -1,0 +1,7 @@
+- name: Creating Projects, Users and Roles
+  environment: admin_openrc_env
+  command: "{{item}}"
+  with_items:
+  - openstack user create --password "{{CINDER_PASS}}" cinder
+  - openstack role add --project service --user cinder admin
+  register: cinder_project_ready

@@ -1,0 +1,18 @@
+#cinder
+- name: create cinder database
+  mysql_db: name=cinder
+            state=present
+
+- name: create cinder local user
+  mysql_user: name=cinder
+              password={{ CINDER_DBPASS }}
+              priv=cinder.*:ALL
+              state=present
+
+- name: create cinder remote user
+  mysql_user: host=%
+              name=cinder
+              password={{ CINDER_DBPASS }}
+              priv=cinder.*:ALL
+              state=present
+
